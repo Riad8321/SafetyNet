@@ -6,6 +6,7 @@ import com.riaddraoui.safetynet.model.Person;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,18 +14,23 @@ import java.util.stream.Collectors;
 public class PersonInfoService {
     private final PersonService personService;
 
+
+
     public PersonInfoService(PersonService personService) {
         this.personService = personService;
+
     }
 
-    /*public getPersonInfo() throws IOException {
+
+    public List<Person> getPersonInfo() throws IOException {
         DataWrapper dataWrapper = personService.readDataFromJSON();
 
         List<Person> personList = dataWrapper.getPersons().stream().map(person -> {
-            List<MedicalRecord> medicalRecord = dataWrapper.getMedicalrecords()
+            MedicalRecord medicalRecord = dataWrapper.getMedicalrecords()
                     .stream()
-                    .filter(record -> record.getFirstName().equalsIgnoreCase(person.getFirstName()) && record.getLastName().equalsIgnoreCase(person.getLastName())).collect(Collectors.toList());
-
+                    .filter(record -> record.getFirstName().equalsIgnoreCase(person.getFirstName()) && record.getLastName().equalsIgnoreCase(person.getLastName()))
+                    .findFirst()
+                    .orElse(new MedicalRecord()); // Return an empty MedicalRecord if not found
 
             return new Person(
                     person.getFirstName(),
@@ -34,25 +40,15 @@ public class PersonInfoService {
                     person.getZip(),
                     person.getEmail(),
                     person.getPhone(),
-                    person.getMedications(),
-                    person.getAllergies()
-
+                    medicalRecord
             );
         }).collect(Collectors.toList());
 
         return personList;
-    }*/
-
-    public List<String> getEmailsByCity(String city) throws IOException {
-        DataWrapper dataWrapper = personService.readDataFromJSON();
-        List<String> emails = dataWrapper.getPersons()
-                .stream()
-                .filter(person -> person.getCity().equalsIgnoreCase(city))
-                .map(Person::getEmail)
-                .distinct()
-                .collect(Collectors.toList());
-
-        return emails;
     }
+
+
+
+
 }
 
